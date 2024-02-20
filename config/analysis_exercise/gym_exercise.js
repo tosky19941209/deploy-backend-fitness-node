@@ -4,7 +4,7 @@ const decimal_point = 3
 let counter = 0
 let state_counter = true
 let prevstatevalue = null
-exports.exercise1 = (pose_data, state_change_exercise) => {
+exports.exercise_1 = (pose_data, state_change_exercise) => {
     if( prevstatevalue === state_change_exercise){
         prevstatevalue = state_change_exercise
     }
@@ -33,7 +33,7 @@ exports.exercise1 = (pose_data, state_change_exercise) => {
 
 
 
-exports.exercise2 = (pose_data, state_change_exercise) => {
+exports.exercise_2 = (pose_data, state_change_exercise) => {
     if( prevstatevalue === state_change_exercise){
         prevstatevalue = state_change_exercise
     }
@@ -62,7 +62,7 @@ exports.exercise2 = (pose_data, state_change_exercise) => {
     return {accuracy:accuracy, counter:counter, state:state_change_exercise}
 }
 
-exports.exercise3 = (pose_data, state_change_exercise) => {
+exports.exercise_3 = (pose_data, state_change_exercise) => {
     if( prevstatevalue === state_change_exercise){
         prevstatevalue = state_change_exercise
     }
