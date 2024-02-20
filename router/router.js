@@ -21,7 +21,6 @@ router.get('/video_load', (req, res) => {
 })
 
 router.get('/changed_exercise', (req, res) => {
-    Gym_exercise
     res.send("success")
 })
 

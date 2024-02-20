@@ -9,7 +9,7 @@ exports.Gym_exercise = (pose_data, exercise, state_change_exercise) => {
     }
 }
 
-exports.House_exercise = (pose_data) => {
+exports.House_exercise = (pose_data, exercise, state_change_exercise) => {
     if(exercise === 'exercise_1'){
         return House_exercise_analysis.exercise1(pose_data, state_change_exercise)
     }
