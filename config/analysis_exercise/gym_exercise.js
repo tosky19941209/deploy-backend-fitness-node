@@ -3,7 +3,6 @@ const {Angle_3_point} = require("./basic_function")
 const decimal_point = 3
 let counter = 0
 let state_counter = true
-let isformatvalue = true
 let prevstatevalue = null
 exports.exercise1 = (pose_data, state_change_exercise) => {
     if( prevstatevalue === state_change_exercise){
