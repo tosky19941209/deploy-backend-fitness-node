@@ -3,7 +3,7 @@
     "builds": [
         {
             "src": "server.js",
-            "use": "@vercel/nodemon",
+            "use": "@vercel/node",
             "config": {
                 "includeFiles": [
                     "dist/**"
