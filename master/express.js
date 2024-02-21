@@ -3,7 +3,7 @@
 module.exports = () => {
     const express = require('express')
     const cors = require('cors')
-    const config = require('./env/config')
+    const config = require('../config/env/config')
     const router = require('../router/router')
     const app = express()
 

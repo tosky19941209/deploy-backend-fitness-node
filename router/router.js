@@ -1,11 +1,10 @@
 const express = require('express')
 const config = require('../config/env/config')
-const { Gym_exercise, House_exercise, exercise1 } = require('../config/analysis_exercise/category_exercise')
 const { json } = require('body-parser')
 const router = express.Router()
 const path = require('path')
 router.get('/test', (req, res) => {
-    res.send("Welcome to fitness site, socket is add step1")
+    res.send("Welcome to fitness site")
 })
 
 let state_counter = false
