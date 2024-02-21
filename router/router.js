@@ -5,7 +5,7 @@ const { json } = require('body-parser')
 const router = express.Router()
 const path = require('path')
 router.get('/test', (req, res) => {
-    res.send("Welcome to fitness site, socket is add")
+    res.send("Welcome to fitness site, socket is add step1")
 })
 
 let state_counter = false
