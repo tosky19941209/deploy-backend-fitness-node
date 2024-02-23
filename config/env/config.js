@@ -1,6 +1,6 @@
 module.exports = {
     port:5000,
-    db:'mongodb://127.0.0.1:27107/mongoose',
+    mongodb:'mongodb://127.0.0.1:27017/fitness-database',
     index_landmark : {
         nose: 0,
         left_eye_inner: 1,

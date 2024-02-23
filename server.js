@@ -1,9 +1,13 @@
-const express = require('./master/express')
-// const mongoose = require('./config/mongoose')
+const express = require('./master/express')()
+const mongoose = require('./master/mongoose')()
 // const express = require('express');
 // const app = express();
 // const port = 3000;ert
-const server = express()
+
+
+
+
+
 
 // app.get('/', (req, res) => {
 //   res.send('Hello, World!');
