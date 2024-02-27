@@ -1,23 +1,27 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const fitness_database = mongoose.Schema({
-    username:{
-        type:String,
-        required:true
+const fitnessSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: false
     },
-    password:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: false
     },
-    exercise_history:{
-        exercise_kind:{
-            type:String,
-            required:true
+    exercise_history: {
+        exercise_kind: {
+            type: String,
+            required: false
         },
-        exercise_data:{
-            type:Date,
-            required:Date.now
+        exercise_data: {
+            type: Date,
+            required:false,
+            default: Date.now
         }
     }
+});
 
-})
+const FitnessModel = mongoose.model('FitnessModel', fitnessSchema);
+
+module.exports = FitnessModel;

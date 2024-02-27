@@ -1,6 +1,7 @@
 function mongoose() {
     const mongoose = require('mongoose')
     const config = require('../config/env/config')
+
     mongoose.connect(config.mongodb, {})
         .then(() => {
             console.log("mongoose is connected")
@@ -8,7 +9,6 @@ function mongoose() {
         .catch((err) => {
             console.log("Error is ", err)
         })
-
 }
 
 module.exports = mongoose
