@@ -1,7 +1,7 @@
 module.exports = {
     port:5000,
     // mongodb:'mongodb://127.0.0.1:27017/fitness-database',
-    mongodb:'mongodb+srv://warrytomas51:tlkwjdqhd@cluster0.rgio0wc.mongodb.net/?retryWrites=true&w=majority',
+    mongodb:'mongodb+srv://jinxiao19941209:rNfoWdcmIlnfvddR@cluster0.j8ekrte.mongodb.net/',
     index_landmark : {
 
         nose: 0,
