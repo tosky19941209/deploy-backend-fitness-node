@@ -2,6 +2,7 @@ module.exports = {
     port:5000,
     mongodb:'mongodb://127.0.0.1:27017/fitness-database',
     index_landmark : {
+
         nose: 0,
         left_eye_inner: 1,
         left_eye: 2,
@@ -35,5 +36,6 @@ module.exports = {
         right_heel: 30,
         left_foot_index: 31,
         right_foot_index: 32
+        
     }
 }
