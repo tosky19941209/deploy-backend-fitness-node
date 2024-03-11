@@ -7,7 +7,7 @@ const { rmSync } = require('fs')
 
 
 router.get('/test', (req, res) => {
-    res.send("Welcome to fitness site")
+    res.send("Welcome to dashboard")
 })
 
 router.get('/video_load', (req, res) => {
