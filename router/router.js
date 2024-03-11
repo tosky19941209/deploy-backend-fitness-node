@@ -37,7 +37,7 @@ router.post('/signup', (req, res) => {
                             message: "success"
                         })
                     })
-                    .then((err) => {
+                    .catch((err) => {
                         console.log("err: ", err)
                     })
             }
