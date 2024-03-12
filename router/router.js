@@ -26,14 +26,14 @@ router.post('/signup', (req, res) => {
     user.findOne({ email })
         .then((response) => {
             if (response) {
-                res.status(404).json({
+                res.send({
                     message: "User is already existed"
                 })
             } else {
                 const newUser = new user(newData)
                 newUser.save()
                     .then(() => {
-                        res.status(404).json({
+                        res.send({
                             message: "success"
                         })
                     })
@@ -55,11 +55,11 @@ router.post('/signupUpdate', (req, res) => {
     }, updateData, { new: true })
         .then((response) => {
             if (response) {
-                res.status(404).json({
+                res.send({
                     message: "success"
                 })
             } else {
-                res.status(404).json({
+                res.send({
                     message: "Email or password is not correct."
                 })
             }
@@ -120,12 +120,12 @@ router.post('/setlogs', (req, res) => {
                 })
                 newlog.save()
                     .then(() => {
-                        res.status(404).json({
+                        res.send({
                             message: "success"
                         })
                     })
             } else {
-                res.status(404).json({
+                res.send({
                     message: "Double"
                 })
             }
@@ -146,7 +146,7 @@ router.post('/setdiet', (req, res) => {
     user.findOne({ email: email, password: password })
         .then(async (result) => {
             if (result === null) {
-                res.status(404).json({
+                res.send({
                     message: "User is not registed."
                 })
                 return
@@ -238,7 +238,7 @@ router.post('/setexercise', (req, res) => {
     user.findOne({ email: email, password: password })
         .then(async (result) => {
             if (result === null) {
-                res.status(404).json({
+                res.send({
                     message: "User is not registed."
                 })
                 return
@@ -287,7 +287,7 @@ router.post('/setexercise', (req, res) => {
                 })
                 newExercise.save()
                     .then(() => {
-                        res.status(404).json({
+                        res.send({
                             message: "added"
                         })
                     })
@@ -304,12 +304,12 @@ router.post('/setexercise', (req, res) => {
                     updateData,
                     { new: true })
                     .then(() => {
-                        res.status(404).json({
+                        res.send({
                             message: "Updated"
                         })
                     })
                     .catch((err) => {
-                        res.status(404).json({
+                        res.send({
                             message: "failed"
                         })
                     })
