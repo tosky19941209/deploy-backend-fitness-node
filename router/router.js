@@ -321,7 +321,7 @@ router.get('/signin', (req, res) => {
     const users = require('../config/model/users')
     const newData = req.query
     const { email, password } = newData
-    users.findOne({ email })
+    users.findOne({ email, password })
         .then((result) => {
             if (result) {
                 res.json({
