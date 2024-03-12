@@ -136,8 +136,13 @@ router.post('/setdiet', (req, res) => {
     const user = require('../config/model/users')
     const diet = require('../config/model/diet')
     const newData = req.body
-    const { email, password } = newData.header
     const updateData = newData.updateData
+    const header = newData.header
+    const { email, password } = header
+
+    console.log("setdiet: ",header)
+    console.log("setdiet: ",updateData)
+
     user.findOne({ email: email, password: password })
         .then(async (result) => {
             if (result === null) {
@@ -191,7 +196,7 @@ router.post('/setdiet', (req, res) => {
                 })
                 newDiet.save()
                     .then(() => {
-                        res.status(404).json({
+                        res.send({
                             message: "added"
                         })
                     })
@@ -208,12 +213,12 @@ router.post('/setdiet', (req, res) => {
                     updateData,
                     { new: true })
                     .then(() => {
-                        res.status(404).json({
+                        res.send({
                             message: "Updated"
                         })
                     })
                     .catch((err) => {
-                        res.status(404).json({
+                        res.send({
                             message: "failed"
                         })
                     })

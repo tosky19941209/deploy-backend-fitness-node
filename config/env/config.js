@@ -3,7 +3,6 @@ module.exports = {
     // mongodb:'mongodb://127.0.0.1:27017/fitness-database',
     mongodb:'mongodb+srv://jinxiao19941209:rNfoWdcmIlnfvddR@cluster0.j8ekrte.mongodb.net/',
     index_landmark : {
-
         nose: 0,
         left_eye_inner: 1,
         left_eye: 2,
