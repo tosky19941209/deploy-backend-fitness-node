@@ -80,56 +80,21 @@ router.post('/setlogs', (req, res) => {
     let state = true
 
     user.findOne({ email, password })
-        .then(async (result) => {
+        .then((result) => {
+            const newlog = new logs({
+                ...updateData,
+                userid: result._id
+            })
 
-            await logs.find({ userid: result._id })
-                .then((response) => {
-                    response.map((item, index) => {
-
-                        const existData = {
-                            exerciseType: item.exerciseType,
-                            startTime: item.startTime,
-                            endTime: item.endTime,
-                            counter: item.counter,
-                            accuracy: item.accuracy
-                        }
-
-                        const currentData = {
-                            exerciseType: updateData.exerciseType,
-                            startTime: updateData.startTime,
-                            endTime: updateData.endTime,
-                            counter: updateData.counter,
-                            accuracy: updateData.accuracy
-                        }
-                        const string1 = JSON.stringify(existData)
-                        const string2 = JSON.stringify(currentData)
-                        if (string1 === string2) {
-                            state = false
-                        }
+            console.log(newlog)
+            newlog.save()
+                .then(() => {
+                    res.send({
+                        message: "success"
                     })
                 })
-
-            if (state) {
-                const newlog = new logs({
-                    userid: result._id,
-                    exerciseType: updateData.exerciseType,
-                    startTime: updateData.startTime,
-                    endTime: updateData.endTime,
-                    counter: updateData.counter,
-                    accuracy: updateData.accuracy
-                })
-                newlog.save()
-                    .then(() => {
-                        res.send({
-                            message: "success"
-                        })
-                    })
-            } else {
-                res.send({
-                    message: "Double"
-                })
-            }
         })
+
 })
 
 router.post('/setdiet', (req, res) => {
@@ -140,8 +105,8 @@ router.post('/setdiet', (req, res) => {
     const header = newData.header
     const { email, password } = header
 
-    console.log("setdiet: ",header)
-    console.log("setdiet: ",updateData)
+    console.log("setdiet: ", header)
+    console.log("setdiet: ", updateData)
 
     user.findOne({ email: email, password: password })
         .then(async (result) => {
@@ -234,7 +199,7 @@ router.post('/setexercise', (req, res) => {
     const header = newData.header
     const { email, password } = header
     const updateData = newData.updateData
-    if(updateData.year === '') return
+    if (updateData.year === '') return
     user.findOne({ email: email, password: password })
         .then(async (result) => {
             if (result === null) {
@@ -419,4 +384,54 @@ router.get('/getdiet', async (req, res) => {
     }
 
 });
+
+router.get('/getweeklyhistory', async (req, res) => {
+    const user = require('../config/model/users')
+    const logs = require('../config/model/logs')
+
+    const header = req.query.header
+    const updateData = req.query.updateData
+    const { email, password } = header
+    const year = updateData.year
+    const month = updateData.month
+    const date = updateData.date
+
+    const userlist = await user.findOne({ email: email, password: password })
+
+
+    const result = await logs.aggregate([
+        {
+            $match: {
+                userid: userlist._id,
+                $expr: {
+                    $and: [
+                        { $gte: [{ $toInt: "$year" }, Number(year[0])] },
+                        { $lte: [{ $toInt: "$year" }, Number(year[6])] },
+                        { $gte: [{ $toInt: "$month" }, Number(month[0])] },
+                        { $lte: [{ $toInt: "$month" }, Number(month[6])] },
+                        { $gte: [{ $toInt: "$date" }, Number(date[0])] },
+                        { $lte: [{ $toInt: "$date" }, Number(date[6])] }
+                    ]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    year: "$year",
+                    month: "$month",
+                    date: "$date"
+                },
+                averageCounter: { $avg: { $toInt: "$counter" } },
+                averageDurtime: { $sum: { $toInt: "$durtime" } },
+                averageAccuracy: { $avg: { $toDouble: "$accuracy" } },
+                data: { $push: "$$ROOT" }
+            }
+        },
+        { $sort: { "_id.year": -1, "_id.month": -1, "_id.date": -1 } }
+      ])
+      
+
+    res.send(result);
+})
 module.exports = router

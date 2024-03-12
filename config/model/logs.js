@@ -5,75 +5,51 @@ const logdb = new mongoose.Schema({
         type: mongoose.mongo.ObjectId,
         required: false
     },
-    exerciseType: {
+    year: {
         type: String,
         required: false
     },
-    startTime: {
-        year: {
-            type: String,
-            required: false
-        },
-        month: {
-            type: String,
-            required: false
-        },
-        date: {
-            type: String,
-            required: false
-        },
-        day: {
-            type: String,
-            required: false
-        },
-        hour: {
-            type: String,
-            required: false
-        },
-        minute: {
-            type: String,
-            required: false
-        },
-        second: {
-            type: String,
-            required: false
-        }
+    month: {
+        type: String,
+        required: false
     },
-    endTime: {
-        year: {
-            type: String,
-            required: false
-        },
-        month: {
-            type: String,
-            required: false
-        },
-        date: {
-            type: String,
-            required: false
-        },
-        day: {
-            type: String,
-            required: false
-        },
-        hour: {
-            type: String,
-            required: false
-        },
-        minute: {
-            type: String,
-            required: false
-        },
-        second: {
-            type: String,
-            required: false
-        }
+    date: {
+        type: String,
+        required: false
+    },
+    day: {
+        type: String,
+        required: false
+    },
+    hour: {
+        type: String,
+        required: false
+    },
+    minute: {
+        type: String,
+        required: false
+    },
+    index: {
+        type: String,
+        required: false
+    },
+    category: {
+        type: String,
+        required: false
+    },
+    exercise:{
+        type: String,
+        required: false
     },
     counter: {
         type: String,
         required: false
     },
     accuracy: {
+        type: String,
+        required: false
+    },
+    durtime: {
         type: String,
         required: false
     }
