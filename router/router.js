@@ -4,6 +4,7 @@ const { json } = require('body-parser')
 const router = express.Router()
 const path = require('path')
 const { rmSync } = require('fs')
+const FeedBacks = require('../config/model/feeback')
 
 
 router.get('/test', (req, res) => {
@@ -429,9 +430,39 @@ router.get('/getweeklyhistory', async (req, res) => {
             }
         },
         { $sort: { "_id.year": -1, "_id.month": -1, "_id.date": -1 } }
-      ])
-      
+    ])
+
 
     res.send(result);
+})
+
+
+router.post('/setfeedback', async (req, res) => {
+    const header = req.body.header
+    const updateData = req.body.updateData
+    const {email, password} = header
+    const feedback = require('../config/model/feeback')
+    const users = require("../config/model/users")
+    const resultUser = await users.findOne({email:email, password: password})
+
+    if (resultUser === null) return
+    const newFeedback = new feedback({
+        userid: resultUser._id,
+        year: updateData.year,
+        month: updateData.month,
+        date: updateData.date,
+        hour: updateData.hour,
+        minute: updateData.minute,
+        feedback: updateData.feedback
+    })
+
+    await newFeedback.save()
+    .then(()=> {
+        res.send({
+            message: "success"
+        })
+    })
+
+    
 })
 module.exports = router
