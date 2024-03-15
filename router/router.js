@@ -4,8 +4,6 @@ const { json } = require('body-parser')
 const router = express.Router()
 const path = require('path')
 const { rmSync } = require('fs')
-const FeedBacks = require('../config/model/feeback')
-
 
 router.get('/test', (req, res) => {
     res.send("Welcome to dashboard 1.3")
@@ -87,7 +85,6 @@ router.post('/setlogs', (req, res) => {
                 userid: result._id
             })
 
-            console.log(newlog)
             newlog.save()
                 .then(() => {
                     res.send({
@@ -106,9 +103,6 @@ router.post('/setdiet', (req, res) => {
     const header = newData.header
     const { email, password } = header
 
-    console.log("setdiet: ", header)
-    console.log("setdiet: ", updateData)
-
     user.findOne({ email: email, password: password })
         .then(async (result) => {
             if (result === null) {
@@ -119,7 +113,7 @@ router.post('/setdiet', (req, res) => {
             }
 
             let addStatus = null
-
+            
             await diet.find({ userid: result._id })
                 .then((response) => {
                     if (response.length === 0) {
@@ -304,6 +298,7 @@ router.get('/signin', (req, res) => {
 })
 
 router.get('/getexercise', async (req, res) => {
+
     const header = req.query.header;
     const getData = req.query.getData;
 
