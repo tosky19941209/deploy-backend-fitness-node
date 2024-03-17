@@ -3,7 +3,6 @@ const config = require('../config/env/config')
 const { json } = require('body-parser')
 const router = express.Router()
 const path = require('path')
-const { rmSync } = require('fs')
 
 router.get('/test', (req, res) => {
     res.send("Welcome to dashboard 1.3")
@@ -102,7 +101,6 @@ router.post('/setdiet', (req, res) => {
     const updateData = newData.updateData
     const header = newData.header
     const { email, password } = header
-
     user.findOne({ email: email, password: password })
         .then(async (result) => {
             if (result === null) {
@@ -113,7 +111,7 @@ router.post('/setdiet', (req, res) => {
             }
 
             let addStatus = null
-            
+
             await diet.find({ userid: result._id })
                 .then((response) => {
                     if (response.length === 0) {
@@ -152,7 +150,8 @@ router.post('/setdiet', (req, res) => {
                     month: updateData.month,
                     date: updateData.date,
                     day: updateData.day,
-                    meal: updateData.meal
+                    meal: updateData.meal,
+                    amount: updateData.amount
                 })
                 newDiet.save()
                     .then(() => {
@@ -162,30 +161,44 @@ router.post('/setdiet', (req, res) => {
                     })
             }
             else {
-                await diet.findOneAndUpdate(
-                    {
-                        userid: result._id,
-                        year: updateData.year,
-                        month: updateData.month,
-                        date: updateData.date,
-                        day: updateData.day
-                    },
-                    updateData,
-                    { new: true })
-                    .then(() => {
-                        res.send({
-                            message: "Updated"
+                if (updateData.meal.breakfast.length === 0 &&
+                    updateData.meal.snack1.length === 0 &&
+                    updateData.meal.lunch.length === 0 &&
+                    updateData.meal.snack2.length === 0 &&
+                    updateData.meal.dinner.length === 0) {
+                    await diet.findOneAndDelete(
+                        {
+                            userid: result._id,
+                            year: updateData.year,
+                            month: updateData.month,
+                            date: updateData.date,
+                            day: updateData.day
                         })
-                    })
-                    .catch((err) => {
-                        res.send({
-                            message: "failed"
+                } else {
+                    await diet.findOneAndUpdate(
+                        {
+                            userid: result._id,
+                            year: updateData.year,
+                            month: updateData.month,
+                            date: updateData.date,
+                            day: updateData.day
+                        },
+                        updateData,
+                        { new: true })
+                        .then(() => {
+                            res.send({
+                                message: "Updated"
+                            })
                         })
-                    })
+                        .catch((err) => {
+                            res.send({
+                                message: "failed"
+                            })
+                        })
+                }
             }
         })
 })
-
 
 router.post('/setexercise', (req, res) => {
     const user = require('../config/model/users')
@@ -205,7 +218,6 @@ router.post('/setexercise', (req, res) => {
             }
 
             let addStatus = null
-
             await exercise.find({ userid: result._id })
                 .then((response) => {
                     if (response.length === 0) {
@@ -349,6 +361,29 @@ router.get('/getdiet', async (req, res) => {
         return;
     }
     let userid = '';
+    const dietMenuModel = require('../config/model/dietmenu')
+
+    const resultDietMenu = await dietMenuModel.aggregate([
+        {
+            $group: {
+                _id: null,
+                foodName: { $push: "$foodName" },
+                kcal: { $push: "$kcal" },
+                protein: { $push: "$protein" },
+                water: { $push: "$water" },
+                mineral: { $push: "$mineral" }
+            }
+        },
+    ]);
+
+    const dietMenu = {
+        foodName: resultDietMenu[0].foodName,
+        kcal: resultDietMenu[0].kcal,
+        protein: resultDietMenu[0].protein,
+        water: resultDietMenu[0].water,
+        mineral: resultDietMenu[0].mineral
+    }
+
     await user.findOne({ email: header.email })
         .then(async (result) => {
             if (result) {
@@ -364,21 +399,24 @@ router.get('/getdiet', async (req, res) => {
             message: "ExercisePlan is not exist"
         })
     else {
-        await diet.find({ userid: userid, year: getData.year, month: getData.month, date: getData.date })
-            .then((result) => {
-                if (result.length !== 0) {
-                    res.send({
-                        message: "success",
-                        result: result[0]
-                    })
-                } else {
-                    res.send({
-                        message: "There is no plan"
-                    })
+        const result = await diet.find({ userid: userid, year: getData.year, month: getData.month, date: getData.date })
+        if (result.length !== 0) {
+            res.send({
+                message: "success",
+                result: {
+                    plandiet: result[0],
+                    dietMenu: dietMenu
                 }
             })
+        } else {
+            res.send({
+                message: "There is no plan",
+                result: {
+                    dietMenu: dietMenu
+                }
+            })
+        }
     }
-
 });
 
 router.get('/getweeklyhistory', async (req, res) => {
@@ -431,14 +469,13 @@ router.get('/getweeklyhistory', async (req, res) => {
     res.send(result);
 })
 
-
 router.post('/setfeedback', async (req, res) => {
     const header = req.body.header
     const updateData = req.body.updateData
-    const {email, password} = header
+    const { email, password } = header
     const feedback = require('../config/model/feeback')
     const users = require("../config/model/users")
-    const resultUser = await users.findOne({email:email, password: password})
+    const resultUser = await users.findOne({ email: email, password: password })
 
     if (resultUser === null) return
     const newFeedback = new feedback({
@@ -452,12 +489,206 @@ router.post('/setfeedback', async (req, res) => {
     })
 
     await newFeedback.save()
-    .then(()=> {
-        res.send({
-            message: "success"
+        .then(() => {
+            res.send({
+                message: "success"
+            })
         })
+
+
+})
+
+router.post('/setdietmenu', async (req, res) => {
+    const dietMenu = require('../config/model/dietmenu')
+    const dietFood = req.body
+    const { foodName, kcal, protein, water, mineral } = dietFood
+    const result = await dietMenu.findOne({ foodName, kcal })
+    if (result) {
+        res.send({
+            message: "duplicate"
+        })
+        return
+    }
+    const newFood = new dietMenu({
+        foodName: foodName,
+        kcal: kcal,
+        protein: protein,
+        water: water,
+        mineral: mineral
     })
 
-    
+    newFood.save()
+        .then((result) => {
+            res.send({
+                message: 'success'
+            })
+        })
 })
+
+router.get('/getdietmenu', async (req, res) => {
+    const dietMenu = require('../config/model/dietmenu')
+
+    const result = await dietMenu.aggregate([
+        {
+            $match:
+            {
+
+            }
+        },
+        {
+            $group:
+            {
+                _id:
+                {
+                    foodName: "$foodName",
+                    kcal: "$kcal"
+                }
+            }
+        },
+        {
+            $sort:
+            {
+                "foodName": -1
+            }
+        }
+    ])
+
+    res.send({
+        result: result
+    })
+
+
+})
+
+router.get('/getweeklytotaldata', async (req, res) => {
+    const user = require('../config/model/users')
+    const diet = require('../config/model/diet')
+    const header = req.query.header
+    const updateData = req.query.updateData
+
+    const year = updateData.year
+    const month = updateData.month
+    const date = updateData.date
+
+    const userlist = await user.findOne({ email: header.email, password: header.password })
+    const result = await diet.aggregate([
+        {
+            $match: {
+                userid: userlist._id,
+                $expr: {
+                    $and: [
+                        { $gte: [{ $toInt: "$year" }, Number(year[0])] },
+                        { $lte: [{ $toInt: '$year' }, Number(year[6])] },
+                        { $gte: [{ $toInt: '$month' }, Number(month[0])] },
+                        { $lte: [{ $toInt: '$month' }, Number(month[6])] },
+                        { $gte: [{ $toInt: "$date" }, Number(date[0])] },
+                        { $lte: [{ $toInt: "$date" }, Number(date[6])] }
+                    ]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    year: "$year",
+                    month: "$month",
+                    date: "$date",
+                    meal: "$meal",
+                    amount: "$amount"
+                },
+                data: { $push: "$$ROOT" }
+            }
+        },
+        {
+            $sort: {
+                "_id.year": -1,
+                "_id.month": -1,
+                "_id.date": -1
+            }
+        }
+    ])
+
+
+    // const result = await diet.aggregate([
+    //     {
+    //         $match: {
+    //             userid: userlist._id,
+    //             $expr: {
+    //                 $and: [
+    //                     { $gte: [{ $toInt: "$year" }, Number(year[0])] },
+    //                     { $lte: [{ $toInt: "$year" }, Number(year[6])] },
+    //                     { $gte: [{ $toInt: "$month" }, Number(month[0])] },
+    //                     { $lte: [{ $toInt: "$month" }, Number(month[6])] },
+    //                     { $gte: [{ $toInt: "$date" }, Number(date[0])] },
+    //                     { $lte: [{ $toInt: "$date" }, Number(date[6])] }
+    //                 ]
+    //             }
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: {
+    //                 year: "$year",
+    //                 month: "$month",
+    //                 date: "$date"
+    //             },
+    //             data: { $push: "$$ROOT" }
+    //         }
+    //     },
+    //     { $sort: { "_id.year": -1, "_id.month": -1, "_id.date": -1 } }
+    // ])
+
+    res.send({
+        message: 'success',
+        result: result
+    })
+})
+
+router.post('/settargetkcal', async (req, res) => {
+
+    const header = req.body.header
+    const updateData = req.body.updateData
+    const userModel = require('../config/model/users')
+    const targetkcalModel = require('../config/model/targetkcal')
+    const userlist = await userModel.findOne({ email: header.email, password: header.password })
+
+    const searchResult = await targetkcalModel.findOne({ userid: userlist._id })
+
+    if (searchResult === null) {
+        const setTargetKcal = new targetkcalModel({
+            userid: userlist._id,
+            targetKcal: updateData.targetKcal
+        })
+        setTargetKcal.save()
+            .then(() => {
+                console.log("success")
+            })
+    }
+    else {
+        await targetkcalModel.findOneAndUpdate({ userid: userlist._id }, updateData, { new: true })
+        res.send({
+            message:"updated"
+        })
+    }
+})
+
+
+router.get('/gettargetkcal', async (req, res) => {
+    const header = req.query.header
+    const userModel = require('../config/model/users')
+    const targetKcalModel = require('../config/model/targetkcal')
+    const user = await userModel.findOne({ email: header.email, password: header.password })
+    const result = await targetKcalModel.findOne({ userid: user._id })
+    if (result !== null) {
+        res.send({
+            message: "success",
+            result: result
+        })
+    } else {
+        res.send({
+            message:'failed'
+        })
+    }
+})
+
 module.exports = router

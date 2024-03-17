@@ -21,25 +21,47 @@ const Diet = new mongoose.Schema({
         type: String,
         required: false
     },
-    meal:{
-        breakfast:{
+    meal: {
+        breakfast: {
             type: [String],
             required: false
         },
-        snack1:{
+        snack1: {
             type: [String],
             required: false
         },
-        lunch:{
+        lunch: {
             type: [String],
             required: false
         },
-        snack2:{
+        snack2: {
             type: [String],
             required: false
         },
-        dinner:{
+        dinner: {
             type: [String],
+            required: false
+        },
+    },
+    amount: {
+        breakfast: {
+            type: [Number],
+            required: false
+        },
+        snack1: {
+            type: [Number],
+            required: false
+        },
+        lunch: {
+            type: [Number],
+            required: false
+        },
+        snack2: {
+            type: [Number],
+            required: false
+        },
+        dinner: {
+            type: [Number],
             required: false
         },
     }
