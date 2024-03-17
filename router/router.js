@@ -174,6 +174,11 @@ router.post('/setdiet', (req, res) => {
                             date: updateData.date,
                             day: updateData.day
                         })
+                        .then(() => {
+                            res.send({
+                                message:"deleted"
+                            })
+                        })
                 } else {
                     await diet.findOneAndUpdate(
                         {
@@ -667,7 +672,7 @@ router.post('/settargetkcal', async (req, res) => {
     else {
         await targetkcalModel.findOneAndUpdate({ userid: userlist._id }, updateData, { new: true })
         res.send({
-            message:"updated"
+            message: "updated"
         })
     }
 })
@@ -686,7 +691,7 @@ router.get('/gettargetkcal', async (req, res) => {
         })
     } else {
         res.send({
-            message:'failed'
+            message: 'failed'
         })
     }
 })
