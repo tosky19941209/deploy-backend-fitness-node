@@ -42,6 +42,7 @@ router.post('/signup', (req, res) => {
         })
 })
 
+
 router.post('/signupUpdate', (req, res) => {
     const user = require('../config/model/users')
     const header = req.body.header
@@ -694,6 +695,13 @@ router.get('/gettargetkcal', async (req, res) => {
             message: 'failed'
         })
     }
+})
+
+router.post("/signup1", (req, res) => {
+    const updateData = req.body
+    res.send({
+        response: updateData
+    })   
 })
 
 module.exports = router
