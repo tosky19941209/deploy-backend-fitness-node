@@ -16,7 +16,7 @@ module.exports = () => {
     app.use('/api/',router)
 
     const server = require('http').Server(app)
-    server.listen(config.port, ()=> {
+    server.listen(config.port , ()=> {
         console.log(`server is running in ${config.port}`)
     })
 }
