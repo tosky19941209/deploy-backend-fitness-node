@@ -4,7 +4,7 @@ var config = require('./env/config')
 var app = express()
 mongoose()
 
-// var https = require('https')
+var https = require('http')
 // app.listen(config.port, '77.37.86.133', () => {
 //     console.log(`Server is running on port ${config.port}`)
 // })
@@ -13,9 +13,9 @@ mongoose()
 //     console.log(`Server is running on port ${config.port}`)
 // })
 
-// const server = https.Server(app)
+const server = https.Server(app)
 
-app.listen( config.port, () => {
+server.listen( config.port, () => {
     console.log(
         `Server is running on port ${config.port}`
     )
